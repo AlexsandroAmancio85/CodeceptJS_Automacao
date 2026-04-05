@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/License-ISC-blue?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=flat-square)
 
-**Suite de testes automatizados de ponta a ponta (E2E) para validar fluxos de login**
+**Suite de testes automatizados de ponta a ponta (E2E) para validar fluxos de login e cadastro**
 
 [Sobre](#sobre) • [Recursos](#recursos) • [Instalação](#instalação) • [Como Usar](#como-usar) • [Estrutura](#estrutura) • [Exemplos](#exemplos)
 
@@ -18,7 +18,7 @@
 
 ## 📋 Sobre
 
-Projeto de **automação de testes web** desenvolvido com **CodeceptJS** e **Playwright**, focado em validar fluxos de autenticação. Os testes são escritos em **português** (BDD) para melhor compreensão, com execução automatizada em navegadores reais.
+Projeto de **automação de testes web** desenvolvido com **CodeceptJS** e **Playwright**, focado em validar fluxos de autenticação (login e cadastro). Os testes são escritos em **português** (BDD) para melhor compreensão, com execução automatizada em navegadores reais.
 
 Este projeto demonstra boas práticas em:
 - ✅ Testes end-to-end (E2E)
@@ -31,6 +31,7 @@ Este projeto demonstra boas práticas em:
 ## 🎯 Recursos
 
 - 🔐 **Testes de Login**: Cobertura completa de cenários de autenticação
+- 📝 **Testes de Cadastro**: 7 cenários cobrindo validações de formulário
 - 🎭 **BDD em Português**: Cenários descritos em linguagem natural (pt-BR)
 - 🌐 **Playwright**: Automação moderna com suporte a múltiplos navegadores
 - 📊 **Relatórios HTML**: Geração automática de relatórios detalhados
@@ -71,9 +72,19 @@ Isso instalará:
 npx codeceptjs run
 ```
 
-### Executar um Teste Específico
+### Executar Testes de Login
 ```bash
 npx codeceptjs run login_test.js
+```
+
+### Executar Testes de Cadastro
+```bash
+npx codeceptjs run register_test.js
+```
+
+### Executar um Teste Específico
+```bash
+npx codeceptjs run <nome_do_arquivo_test.js>
 ```
 
 ### Executar com Interface Visual (Headed Mode)
@@ -97,7 +108,8 @@ Após a execução, abra o relatório em:
 ```
 codecept_js/
 ├── 📄 codecept.conf.js       # Configuração principal do CodeceptJS
-├── 📄 login_test.js          # Arquivo com testes de login
+├── 📄 login_test.js          # Cenários de testes de login (3 testes)
+├── 📄 register_test.js       # Cenários de testes de cadastro (7 testes)
 ├── 📄 steps_file.js          # Definição de steps customizados
 ├── 📄 steps.d.ts             # TypeScript definitions
 ├── 📦 package.json           # Dependências do projeto
@@ -112,7 +124,8 @@ codecept_js/
 | Arquivo | Descrição |
 |---------|-----------|
 | `codecept.conf.js` | Configuração do CodeceptJS (navegador, URL base, helpers, plugins) |
-| `login_test.js` | Cenários de teste do fluxo de login |
+| `login_test.js` | 3 cenários de teste do fluxo de login |
+| `register_test.js` | 7 cenários de teste do fluxo de cadastro e validações |
 | `steps_file.js` | Implementação dos steps customizados (ações reutilizáveis) |
 | `steps.d.ts` | Type definitions para autocomplete dos steps |
 
@@ -150,6 +163,42 @@ Exemplo('Login com senha inválida',  ({ Eu }) => {
     Eu.preenchoOCampo('#password', '12345');
     Eu.clico('#btnLogin');
     Eu.vejo('Senha inválida.');
+});
+```
+
+### Teste 4: Cadastro com Sucesso
+```javascript
+Exemplo('Cadastro com Sucesso',  ({ Eu }) => {
+    Eu.estouNaPagina('/register');
+    Eu.preenchoOCampo('#user', 'João Silva');
+    Eu.preenchoOCampo('#email', 'joao@teste.com');
+    Eu.preenchoOCampo('#password', 'Senha123!');
+    Eu.clico('#btnRegister');
+    Eu.vejo('Cadastro realizado!');
+});
+```
+
+### Teste 5: Cadastro com Email Inválido
+```javascript
+Exemplo('Cadastro com email inválido',  ({ Eu }) => {
+    Eu.estouNaPagina('/register');
+    Eu.preenchoOCampo('#user', 'Pedro Costa');
+    Eu.preenchoOCampo('#email', 'email_invalido');
+    Eu.preenchoOCampo('#password', 'Senha123');
+    Eu.clico('#btnRegister');
+    Eu.vejo('O campo e-mail deve ser prenchido corretamente');
+});
+```
+
+### Teste 6: Cadastro com Senha Curta
+```javascript
+Exemplo('Cadastro com senha menor que 6 dígitos',  ({ Eu }) => {
+    Eu.estouNaPagina('/register');
+    Eu.preenchoOCampo('#user', 'Ana Paula');
+    Eu.preenchoOCampo('#email', 'ana@teste.com');
+    Eu.preenchoOCampo('#password', '12345');
+    Eu.clico('#btnRegister');
+    Eu.vejo('O campo senha deve ter pelo menos 6 dígitos');
 });
 ```
 
@@ -202,7 +251,7 @@ O projeto está configurado com o plugin `htmlReporter`, que automaticamente ger
 
 Para melhorar este projeto, você pode:
 
-- 📝 Adicionar mais cenários de teste (redefinição de senha, cadastro, etc)
+- 📝 Adicionar mais cenários de teste (redefinição de senha, validações avançadas, etc)
 - 📊 Integrar com CI/CD (GitHub Actions, GitLab CI, Travis CI)
 - 🔄 Implementar testes de regressão visual
 - 🌐 Expandir para múltiplos navegadores (Firefox, Safari)
